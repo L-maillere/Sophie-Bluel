@@ -173,9 +173,11 @@ nav li:hover {
 	display: flex;
 	justify-content: center;
 	position: relative;
+	width: fit-content;
 	top: -74px;
-	right: -180px;
+	left: 20%;
 	margin-bottom: -18px;
+	margin: 0 auto -18px;
 }
 
 .modifier-projets i {
@@ -358,7 +360,7 @@ footer nav ul {
 	bottom: 0;
 }
 
-/* Création modale */
+/* Création mode admin */
 
 .mode-classic {
 	display: flex;
@@ -379,6 +381,7 @@ footer nav ul {
 	background-color: black;
 	color: white;
 	margin-bottom: 38px;
+	z-index: 9999;
 }
 
 .mode-admin i {
@@ -401,4 +404,52 @@ footer nav ul {
 	font-size: 14px;
 	font-family: 'Work Sans';
 	font-weight: 500;
+}
+
+/* Création modale */
+
+.modale {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.3);
+	left: 0;
+	top: 0;
+	z-index: 9998;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.modale-wrapper {
+	width: 630px;
+	height: 731px;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	margin: auto;
+	max-width: calc(100vw - 40px);
+	max-height: calc(100vh - 140px);
+	display: flex;
+	justify-content: center;
+	position: relative;
+}
+
+.modale-wrapper h3 {
+	margin-top: 60px;
+	font-size: 26px;
+	font-weight: 400;
+}
+
+.modale-wrapper i {
+	position: absolute;
+	right: 30px;
+	top: 23px;
+	font-size: 24px;
+}
+
+.modale-wrapper .gallery {
+	width: 66%;
+	height: 400px;
+	margin: auto;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
