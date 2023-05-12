@@ -88,3 +88,90 @@ hotelsRestaurantsBtn.addEventListener('click', function() {
     document.querySelector(".gallery").innerHTML = "";
     generateWorks(filteredWorks);
 });
+
+// Gestion du bouton dans le menu de navigation login/logout
+// Vérification de la précense d'un token
+if (localStorage.getItem('token')) {
+    const loginLink = document.querySelector('.menu-login a');
+    loginLink.textContent = 'logout';
+
+    loginLink.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        // Suppression du token pour "déconnecter"
+        localStorage.removeItem('token');
+
+        loginLink.textContent = 'login';
+
+        window.location.href = 'index.html';
+    });
+}
+
+// Admin mode + Modale
+// Vérification de la précense d'un token
+if (localStorage.getItem('token')) {
+    const header = document.querySelector("header");
+    //Création des éléments présents dans le header version admin et ajout des classes/styles css
+    const headerAdmin = document.createElement("div");
+    headerAdmin.classList.add('mode-admin');
+    const iconAdmin = document.createElement("i");
+    iconAdmin.classList.add('fa-regular', 'fa-pen-to-square');
+    const textAdmin = document.createElement("p");
+    textAdmin.innerText = 'Mode édition';
+    const applyAdmin = document.createElement("button");
+    applyAdmin.innerText = 'publier les changements';
+
+    //Rattachement des balises crées au header
+    header.appendChild(headerAdmin);
+    headerAdmin.appendChild(iconAdmin);
+    headerAdmin.appendChild(textAdmin);
+    headerAdmin.appendChild(applyAdmin);
+
+    //Rajout d'une marge au header initial pour laisser la place à la partie "header admin"
+    const headerClassic = document.querySelector(".mode-classic");
+    headerClassic.style.setProperty('margin-top', '97px');
+
+    const img = document.querySelector("figure");
+    //Création des éléments présents avec l'image version admin et ajout des classes/styles css
+    const imgAdmin = document.createElement("div");
+    imgAdmin.classList.add('modifier-img');
+    const iconImgAdmin = document.createElement("i");
+    iconImgAdmin.classList.add('fa-regular', 'fa-pen-to-square');
+    const textImgAdmin = document.createElement("p");
+    textImgAdmin.innerText = 'modifier';
+
+    //Rattachement des balises crées à l'image
+    img.appendChild(imgAdmin);
+    imgAdmin.appendChild(iconImgAdmin);
+    imgAdmin.appendChild(textImgAdmin);
+
+    const article = document.querySelector("article");
+    //Création des éléments présents dans l'article version admin et ajout des classes/styles css
+    const articleAdmin = document.createElement("div");
+    articleAdmin.classList.add('modifier-article');
+    const iconArticleAdmin = document.createElement("i");
+    iconArticleAdmin.classList.add('fa-regular', 'fa-pen-to-square');
+    const textArticleAdmin = document.createElement("p");
+    textArticleAdmin.innerText = 'modifier';
+
+    //Rattachement des balises crées à l'article
+    const titleBalise = document.querySelector('h2');
+    article.insertBefore(articleAdmin, titleBalise);
+    articleAdmin.appendChild(iconArticleAdmin);
+    articleAdmin.appendChild(textArticleAdmin);
+
+    const projects = document.getElementById('portfolio');
+    //Création des éléments présents dans le portfolio version admin et ajout des classes/styles css
+    const projectsAdmin = document.createElement("div");
+    projectsAdmin.classList.add('modifier-projets');
+    const iconProjectsAdmin = document.createElement("i");
+    iconProjectsAdmin.classList.add('fa-regular', 'fa-pen-to-square');
+    const textProjectsAdmin = document.createElement("p");
+    textProjectsAdmin.innerText = 'modifier';
+
+    //Rattachement des balises crées au portfolio
+    const filtersDiv = document.querySelector('.filters');
+    projects.insertBefore(projectsAdmin, filtersDiv);
+    projectsAdmin.appendChild(iconProjectsAdmin);
+    projectsAdmin.appendChild(textProjectsAdmin);
+}
