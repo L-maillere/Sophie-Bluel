@@ -1,10 +1,10 @@
 // Récupération des travaux depuis l'API
 const response = await fetch('http://localhost:5678/api/works');
 const works = await response.json();
+let copyWorks = works;
 // Transformations des travaux en JSON
 const valueWorks = JSON.stringify(works);
 // Création d'une variable qui stockera une copie de la gallery pour la modale
-let originalWorks = [];
 
 function generateWorks(works) {
     for (let i = 0; i < works.length; i++) {
@@ -13,7 +13,6 @@ function generateWorks(works) {
         const sectionGallery = document.querySelector(".gallery");
         // Création d'une balise dédiée à un travail
         const workElement = document.createElement("figure");
-        workElement.classList.add('.gellery-item');
         workElement.dataset.id = works[i].id;
         // Création des balises
         const imageElement = document.createElement("img");
@@ -27,8 +26,25 @@ function generateWorks(works) {
         workElement.appendChild(descriptionElement);
     }
 }
-
 generateWorks(works);
+
+function generateModalWorks() {
+    for (let i = 0; i < copyWorks.length; i++) {
+        const article = copyWorks[i];
+        const galleryModale = document.querySelector(".modale-gallery");
+        const workElement = document.createElement("figure");
+        workElement.dataset.id = copyWorks[i].id;
+        const imageElement = document.createElement("img");
+        imageElement.src = article.imageUrl;
+        const editElement = document.createElement("a");
+        editElement.href = '#';
+        editElement.innerText = 'éditer';
+
+        galleryModale.appendChild(workElement);
+        workElement.appendChild(imageElement);
+        workElement.appendChild(editElement);
+    }
+}
 
 // Fonctionnement bouton du filtre "Tous"
 const allBtn = document.getElementById('all');
@@ -74,6 +90,7 @@ apartmentsBtn.addEventListener('click', function() {
     // Mise à jour de la galerie
     document.querySelector(".gallery").innerHTML = "";
     generateWorks(filteredWorks);
+    console.log(works);
 });
 
 // Fonctionnement bouton du filtre "Hôtels & Restaurants"
@@ -190,10 +207,17 @@ if (localStorage.getItem('token')) {
         wrapperModale.classList.add('modale-wrapper');
         const closeBtnModale = document.createElement("i");
         closeBtnModale.classList.add('fa-solid', 'fa-xmark');
+        closeBtnModale.id = 'closeBtnModale';
         const titleModale = document.createElement("h3");
         titleModale.innerText = 'Galerie photo';
         const galleryModale = document.createElement("div");
         galleryModale.classList.add('modale-gallery');
+        const addBtnModale = document.createElement("button");
+        addBtnModale.innerText = 'Ajouter une photo';
+        const deleteModale = document.createElement("a");
+        deleteModale.href = '#';
+        deleteModale.innerText = 'Supprimer la galerie';
+        deleteModale.id = 'delete-gallery';
 
         // Rattachement de la modale à la balise <main> et au bon endroit
         const main = document.querySelector('main');
@@ -202,6 +226,10 @@ if (localStorage.getItem('token')) {
         wrapperModale.appendChild(closeBtnModale);
         wrapperModale.appendChild(titleModale);
         wrapperModale.appendChild(galleryModale);
+        wrapperModale.appendChild(addBtnModale);
+        wrapperModale.appendChild(deleteModale);
+
+        generateModalWorks(copyWorks);
 
         // Suppression de la modale quand on vient cliquer sur la croix
         closeBtnModale.addEventListener('click', function() {
@@ -214,6 +242,87 @@ if (localStorage.getItem('token')) {
             if (!wrapperModale.contains(target)) {
                 modale.remove();
             }
+        });
+
+        // Sauvegarde de la première "page" de la modale pour permettre le retour arrière
+        const initialModale = modale.cloneNode(true);
+
+        // Création de la deuxième "page" de la modale, permettant d'ajouter une photo/travail
+        addBtnModale.addEventListener('click', function(event) {
+            event.stopPropagation();
+            wrapperModale.innerHTML = '';
+
+            const previousBtnModale = document.createElement("i");
+            previousBtnModale.classList.add('fa-solid', 'fa-arrow-left');
+            previousBtnModale.id = 'previousBtnModale';
+            titleModale.innerText = 'Ajout photo';
+
+            const imageContainer = document.createElement("div");
+            imageContainer.id = 'imageContainer';
+            const drawImageContainer = document.createElement("i");
+            drawImageContainer.classList.add('fa-regular', 'fa-image');
+            const fileInputBtn = document.createElement("label");
+            fileInputBtn.setAttribute("for", "fileInput");
+            fileInputBtn.innerText = '+ Ajouter photo';
+            const fileInput = document.createElement("input");
+            fileInput.id = 'fileInput';
+            fileInput.type = 'file';
+            fileInput.accept = "image/jpg, image/png";
+            const fileConditions = document.createElement("p");
+            fileConditions.innerText = 'jpg, png : 4mo max';
+
+            const formContainer = document.createElement("div");
+            formContainer.id = 'formContainer';
+            const formFileProperties = document.createElement("form");
+            formFileProperties.id = 'formFileProperties';
+            const labelTitle = document.createElement("label");
+            labelTitle.innerText = 'Titre';
+            const inputTitle = document.createElement("input");
+            const labelCategories = document.createElement("label");
+            labelCategories.innerText = 'Catégorie';
+            const categoriesList = document.createElement("select");
+            const categorieObjects = document.createElement("option");
+            categorieObjects.value = "Objets";
+            categorieObjects.innerText = "Objets";
+            const categorieApartments = document.createElement("option");
+            categorieApartments.value = "Appartements";
+            categorieApartments.innerText = "Appartements";
+            const categorieHotelsRestaurants = document.createElement("option");
+            categorieHotelsRestaurants.value = "Hotels & restaurants";
+            categorieHotelsRestaurants.innerText = "Hotels & restaurants";
+
+            const validateBtn = document.createElement("button");
+            validateBtn.innerText = 'Valider';
+            validateBtn.type = 'submit';
+            validateBtn.id = 'validateBtn';
+            
+            wrapperModale.appendChild(previousBtnModale);
+            wrapperModale.appendChild(closeBtnModale);
+            wrapperModale.appendChild(titleModale);
+
+            wrapperModale.appendChild(imageContainer);
+            imageContainer.appendChild(drawImageContainer);
+            imageContainer.appendChild(fileInputBtn);
+            imageContainer.appendChild(fileInput);
+            imageContainer.appendChild(fileConditions);
+
+            wrapperModale.appendChild(formContainer);
+            formContainer.appendChild(formFileProperties);
+            formFileProperties.appendChild(labelTitle);
+            formFileProperties.appendChild(inputTitle);
+            formFileProperties.appendChild(labelCategories);
+            formFileProperties.appendChild(categoriesList);
+            categoriesList.appendChild(categorieObjects);
+            categoriesList.appendChild(categorieApartments);
+            categoriesList.appendChild(categorieHotelsRestaurants);
+
+            wrapperModale.appendChild(validateBtn);
+
+            previousBtnModale.addEventListener('click', function () {
+                modale.remove();
+
+                main.insertBefore(initialModale, projects);
+            })
         });
     });
 }

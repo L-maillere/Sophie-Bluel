@@ -426,30 +426,145 @@ footer nav ul {
 	height: 731px;
 	background-color: #FFFFFF;
 	border-radius: 10px;
-	margin: auto;
+	margin: auto 0;
 	max-width: calc(100vw - 40px);
-	max-height: calc(100vh - 140px);
+	max-height: calc(100vh - 130px);
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	align-items: center;
 	position: relative;
 }
 
 .modale-wrapper h3 {
 	margin-top: 60px;
+	margin-bottom: 46px;
 	font-size: 26px;
 	font-weight: 400;
 }
 
-.modale-wrapper i {
+#closeBtnModale {
 	position: absolute;
 	right: 30px;
 	top: 23px;
 	font-size: 24px;
 }
 
-.modale-wrapper .gallery {
-	width: 66%;
-	height: 400px;
-	margin: auto;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+.modale-gallery {
+	display: grid;
+	width: 66.6%;
+	height: 380px;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	grid-template-rows: 130px 130px 120px;
+	grid-column-gap: 9px;
+	padding-bottom: 42px;
+	border-bottom: 1px solid #B3B3B3;
+}
+
+.modale-gallery figure {
+	height: 120px;
+}
+
+.modale-gallery img {
+	width: 100%;
+}
+
+.modale-gallery a {
+	margin-top: 3px;
+	margin-left: 1px;
+	font-size: 12px;
+	color: black;
+	text-decoration: none;
+}
+
+.modale-wrapper button {
+	margin-top: 38px;
+	height: 36px;
+	width: 237px;
+	color: white;
+	background: #1D6154;
+	border-radius: 60px;
+	border: none;
+	font-family: 'Syne';
+	font-size: 14px;
+}
+
+#delete-gallery {
+	color: #D65353;
+	text-decoration: none;
+	font-family: 'Syne';
+	font-weight: 400;
+	font-size: 14px;
+	margin-top: 23px;
+}
+
+#previousBtnModale {
+	position: absolute;
+	font-size: 21px;
+	left: 30px;
+	top: 23px;
+}
+
+#imageContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 66.6%;
+	height: 169px;
+	background-color: #E8F1F6;
+}
+
+#imageContainer i {
+	margin-top: 28px;
+	font-size: 46px;
+	color: #B9C5CC;
+}
+
+#imageContainer label {
+	width: 173px;
+	height: 36px;
+	background: #CBD6DC;
+	border-radius: 50px;
+	text-align: center;
+	line-height: 36px;
+	color: #306685;
+	font-weight: 500;
+	margin-top: 21px;
+	margin-bottom: 7px;
+}
+
+#fileInput {
+	opacity: 0;
+	position: absolute;
+}
+
+#imageContainer p {
+	margin-bottom: 19px;
+	font-size: 10px;
+}
+
+#formContainer {
+	width: 66.6%;
+	padding-top: 30px;
+	padding-bottom: 26px;
+	border-bottom: 1px solid #B3B3B3;
+}
+
+#formFileProperties {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+#formFileProperties label {
+	margin-bottom: 10px;
+}
+
+#formFileProperties input, #formFileProperties select {
+	width: 100%;
+	height: 51px;
+	border: none;
+	outline: none;
+	padding: 0;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	margin-bottom: 21px;
 }
