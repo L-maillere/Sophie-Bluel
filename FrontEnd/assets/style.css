@@ -511,6 +511,7 @@ footer nav ul {
 	width: 66.6%;
 	height: 169px;
 	background-color: #E8F1F6;
+	position: relative;
 }
 
 #imageContainer i {
@@ -567,4 +568,13 @@ footer nav ul {
 	padding: 0;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 	margin-bottom: 21px;
+}
+
+#imageSelected {
+	position: absolute;
+	height: 100%;
+}
+
+#validateBtn {
+	background: #A7A7A7;
 }

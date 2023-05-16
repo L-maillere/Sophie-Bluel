@@ -244,9 +244,6 @@ if (localStorage.getItem('token')) {
             }
         });
 
-        // Sauvegarde de la première "page" de la modale pour permettre le retour arrière
-        const initialModale = modale.cloneNode(true);
-
         // Création de la deuxième "page" de la modale, permettant d'ajouter une photo/travail
         addBtnModale.addEventListener('click', function(event) {
             event.stopPropagation();
@@ -261,6 +258,10 @@ if (localStorage.getItem('token')) {
             imageContainer.id = 'imageContainer';
             const drawImageContainer = document.createElement("i");
             drawImageContainer.classList.add('fa-regular', 'fa-image');
+            const imageSelected = document.createElement("img");
+            imageSelected.id = 'imageSelected';
+            imageSelected.style.display = 'none';
+            imageSelected.src = '#';
             const fileInputBtn = document.createElement("label");
             fileInputBtn.setAttribute("for", "fileInput");
             fileInputBtn.innerText = '+ Ajouter photo';
@@ -302,6 +303,7 @@ if (localStorage.getItem('token')) {
 
             wrapperModale.appendChild(imageContainer);
             imageContainer.appendChild(drawImageContainer);
+            imageContainer.appendChild(imageSelected);
             imageContainer.appendChild(fileInputBtn);
             imageContainer.appendChild(fileInput);
             imageContainer.appendChild(fileConditions);
@@ -318,11 +320,61 @@ if (localStorage.getItem('token')) {
 
             wrapperModale.appendChild(validateBtn);
 
-            previousBtnModale.addEventListener('click', function () {
-                modale.remove();
+            fileInput.addEventListener('change', function(event) {
+                const selectedFile = event.target.files[0];
+                const imageURL = URL.createObjectURL(selectedFile);
+                imageSelected.src = imageURL;
+                imageSelected.style.display = 'block';
+                fileInputBtn.style.display = 'none';
+                fileConditions.style.display = 'none';
+                drawImageContainer.style.display = 'none';
+            });
 
-                main.insertBefore(initialModale, projects);
-            })
+            function checkFields() {
+                const inputValue = inputTitle.value;
+                const categorieValue = categoriesList.value;
+                const fileSelected = fileInput.files[0];
+                if (inputValue && categorieValue && fileSelected) {
+                    validateBtn.disabled = false;
+                    validateBtn.style.background = '#1D6154';
+                    validateBtn.addEventListener('click', addWork);
+                } else {
+                    validateBtn.disabled = true;
+                    validateBtn.style.background = '#A7A7A7'
+                    console.log("champs incomplets");
+                    validateBtn.removeEventListener('click', addWork);
+                }
+            };
+
+            inputTitle.addEventListener('input', checkFields);
+            categoriesList.addEventListener('change', checkFields);
+            fileInput.addEventListener('input', checkFields);
+
+            function addWork(event) {
+                event.preventDefault;
+                console.log(copyWorks);
+
+                const categoryID = parseInt(categoriesList.selectedIndex.value);
+                const newImage = {
+                    id: copyWorks.length + 1,
+                    title: inputTitle.value,
+                    imageURL: imageSelected.src,
+                    categoryID: categoryID,
+                    userId: 1,
+                    category: {
+                        id: categoryID,
+                        name: categoriesList.options[categoriesList.selectedIndex].text
+                    }
+                };
+
+                copyWorks.push(newImage);
+
+                document.querySelector(".gallery").innerHTML = "";
+                generateWorks(copyWorks);
+                console.log(copyWorks);
+
+                modale.remove();
+            }
         });
     });
 }
