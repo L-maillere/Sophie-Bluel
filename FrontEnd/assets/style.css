@@ -461,11 +461,49 @@ footer nav ul {
 }
 
 .modale-gallery figure {
+	position: relative;
 	height: 120px;
 }
 
 .modale-gallery img {
 	width: 100%;
+}
+
+.deleteBtn {
+	position: absolute;
+	font-size: 9px;
+	padding: 4px;
+	color: white;
+	background: #000000;
+	border-radius: 2px;
+	top: 6px;
+	right: 6px;
+	cursor: pointer;
+}
+
+.moovBtn {
+	opacity: 0;
+	position: absolute;
+	font-size: 11px;
+	padding: 3px;
+	color: white;
+	background: #000000;
+	border-radius: 2px;
+	top: 6px;
+	right: 26px;
+	cursor: pointer;
+}
+
+.modale-gallery figure:hover .moovBtn {
+	opacity: 1;
+	display: block;
+}
+
+.deleteBtn::before {
+	display: block;
+	width: 9px;
+	height: 9px;
+	text-align: center;
 }
 
 .modale-gallery a {

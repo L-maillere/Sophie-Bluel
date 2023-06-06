@@ -1,7 +1,6 @@
 // Récupération des travaux depuis l'API
 const response = await fetch('http://localhost:5678/api/works');
 const works = await response.json();
-let copyWorks = works;
 // Transformations des travaux en JSON
 const valueWorks = JSON.stringify(works);
 // Création d'une variable qui stockera une copie de la gallery pour la modale
@@ -29,19 +28,25 @@ function generateWorks(works) {
 generateWorks(works);
 
 function generateModalWorks() {
-    for (let i = 0; i < copyWorks.length; i++) {
-        const article = copyWorks[i];
+    for (let i = 0; i < works.length; i++) {
+        const article = works[i];
         const galleryModale = document.querySelector(".modale-gallery");
         const workElement = document.createElement("figure");
-        workElement.dataset.id = copyWorks[i].id;
+        workElement.dataset.id = works[i].id;
         const imageElement = document.createElement("img");
         imageElement.src = article.imageUrl;
+        const deleteBtn = document.createElement("i");
+        deleteBtn.classList.add('fa-solid', 'fa-trash-can', 'deleteBtn');
+        const moovBtn = document.createElement("i");
+        moovBtn.classList.add('fa-solid', 'fa-arrows-up-down-left-right', 'moovBtn');
         const editElement = document.createElement("a");
         editElement.href = '#';
         editElement.innerText = 'éditer';
 
         galleryModale.appendChild(workElement);
         workElement.appendChild(imageElement);
+        workElement.appendChild(deleteBtn);
+        workElement.appendChild(moovBtn);
         workElement.appendChild(editElement);
     }
 }
@@ -90,7 +95,6 @@ apartmentsBtn.addEventListener('click', function() {
     // Mise à jour de la galerie
     document.querySelector(".gallery").innerHTML = "";
     generateWorks(filteredWorks);
-    console.log(works);
 });
 
 // Fonctionnement bouton du filtre "Hôtels & Restaurants"
@@ -229,7 +233,7 @@ if (localStorage.getItem('token')) {
         wrapperModale.appendChild(addBtnModale);
         wrapperModale.appendChild(deleteModale);
 
-        generateModalWorks(copyWorks);
+        generateModalWorks(works);
 
         // Suppression de la modale quand on vient cliquer sur la croix
         closeBtnModale.addEventListener('click', function() {
@@ -244,16 +248,20 @@ if (localStorage.getItem('token')) {
             }
         });
 
+        let newWorks = [];
+        var selectedFile;
         // Création de la deuxième "page" de la modale, permettant d'ajouter une photo/travail
         addBtnModale.addEventListener('click', function(event) {
             event.stopPropagation();
             wrapperModale.innerHTML = '';
 
+            // ajout des éléments qui constitue le haut de la 2ème page de la modale
             const previousBtnModale = document.createElement("i");
             previousBtnModale.classList.add('fa-solid', 'fa-arrow-left');
             previousBtnModale.id = 'previousBtnModale';
             titleModale.innerText = 'Ajout photo';
 
+            // ajout des éléments qui constitue l'item pour "uploader" une image
             const imageContainer = document.createElement("div");
             imageContainer.id = 'imageContainer';
             const drawImageContainer = document.createElement("i");
@@ -272,6 +280,7 @@ if (localStorage.getItem('token')) {
             const fileConditions = document.createElement("p");
             fileConditions.innerText = 'jpg, png : 4mo max';
 
+            // ajout des éléments qui constitue le titre et la catégorie de la nouvelle image
             const formContainer = document.createElement("div");
             formContainer.id = 'formContainer';
             const formFileProperties = document.createElement("form");
@@ -283,20 +292,22 @@ if (localStorage.getItem('token')) {
             labelCategories.innerText = 'Catégorie';
             const categoriesList = document.createElement("select");
             const categorieObjects = document.createElement("option");
-            categorieObjects.value = "Objets";
+            categorieObjects.value = 1;
             categorieObjects.innerText = "Objets";
             const categorieApartments = document.createElement("option");
-            categorieApartments.value = "Appartements";
+            categorieApartments.value = 2;
             categorieApartments.innerText = "Appartements";
             const categorieHotelsRestaurants = document.createElement("option");
-            categorieHotelsRestaurants.value = "Hotels & restaurants";
+            categorieHotelsRestaurants.value = 3;
             categorieHotelsRestaurants.innerText = "Hotels & restaurants";
 
+            // ajout du bouton Valider
             const validateBtn = document.createElement("button");
             validateBtn.innerText = 'Valider';
             validateBtn.type = 'submit';
             validateBtn.id = 'validateBtn';
             
+            // Rattachement de chaque élément à son parent dans le DOM
             wrapperModale.appendChild(previousBtnModale);
             wrapperModale.appendChild(closeBtnModale);
             wrapperModale.appendChild(titleModale);
@@ -320,8 +331,9 @@ if (localStorage.getItem('token')) {
 
             wrapperModale.appendChild(validateBtn);
 
+            // Event listener qui fait apparaître la photo uploadé et disparaître les autres éléments dans la div bleue claire
             fileInput.addEventListener('change', function(event) {
-                const selectedFile = event.target.files[0];
+                selectedFile = event.target.files[0];
                 const imageURL = URL.createObjectURL(selectedFile);
                 imageSelected.src = imageURL;
                 imageSelected.style.display = 'block';
@@ -330,6 +342,7 @@ if (localStorage.getItem('token')) {
                 drawImageContainer.style.display = 'none';
             });
 
+            // Fonction qui vérifie que le bouton Valider n'est cliquable qu'une fois toutes les propriétés de la photo remplie
             function checkFields() {
                 const inputValue = inputTitle.value;
                 const categorieValue = categoriesList.value;
@@ -341,24 +354,25 @@ if (localStorage.getItem('token')) {
                 } else {
                     validateBtn.disabled = true;
                     validateBtn.style.background = '#A7A7A7'
-                    console.log("champs incomplets");
                     validateBtn.removeEventListener('click', addWork);
                 }
             };
 
+            // Lancement de la fonction checkFields à chaque que l'image, le texte ou la catégorie sont mis à jour
             inputTitle.addEventListener('input', checkFields);
             categoriesList.addEventListener('change', checkFields);
             fileInput.addEventListener('input', checkFields);
 
+            // Fonction qui rajoute l'objet dans notre tableau works pour visualiser le rendu final
+            // avec la nouvelle photo avant d'envoyer la modification à l'API
             function addWork(event) {
-                event.preventDefault;
-                console.log(copyWorks);
+                event.preventDefault();
 
-                const categoryID = parseInt(categoriesList.selectedIndex.value);
+                const categoryID = parseInt(categoriesList.options[categoriesList.selectedIndex].value);
                 const newImage = {
-                    id: copyWorks.length + 1,
+                    id: works.length + 1,
                     title: inputTitle.value,
-                    imageURL: imageSelected.src,
+                    imageUrl: imageSelected.src,
                     categoryID: categoryID,
                     userId: 1,
                     category: {
@@ -367,14 +381,79 @@ if (localStorage.getItem('token')) {
                     }
                 };
 
-                copyWorks.push(newImage);
+                works.push(newImage);
+                newWorks.push(newImage);
 
                 document.querySelector(".gallery").innerHTML = "";
-                generateWorks(copyWorks);
-                console.log(copyWorks);
+                generateWorks(works);
 
                 modale.remove();
             }
         });
+        // Fonction qui envoie tout les travaux rajoutés sur le site à l'API
+        async function sendNewWorksToAPI() {
+            const token = localStorage.getItem("token");
+            for (let i = 0; i < newWorks.length; i++) {
+                const work = newWorks[i];
+                const formData = new FormData();
+                formData.append("image", selectedFile);
+                formData.append("title", work.title);
+                formData.append("category", work.categoryID);
+                const reponse = await fetch("http://localhost:5678/api/works", {
+                    method: 'POST',
+                    headers: {
+                        accept: "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                });
+            }
+            newWorks = [];
+        }
+        // Appel de la fonction sendNewWorksToAPI lors du clique du bouton publier les changements
+        applyAdmin.addEventListener('click', function() {
+            sendNewWorksToAPI();
+            removeWorksFromAPI();
+        });
+        let deletedWorks = [];
+        function deleteWork(id) {
+            const index = works.findIndex((element) => element.id == id);
+
+            if (index != -1) {
+                works.splice(index, 1);
+            }
+        };
+
+        const deleteButtons = document.querySelectorAll('.deleteBtn');
+
+        deleteButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const figure = button.parentNode;
+
+                const photoId = figure.getAttribute('data-id');
+                deletedWorks.push(photoId);
+                deleteWork(photoId);
+
+                document.querySelector(".gallery").innerHTML = "";
+                generateWorks(works);
+                modale.remove();
+            });
+        });
+
+        async function removeWorksFromAPI() {
+            const token = localStorage.getItem("token");
+            for( let i = 0; i < deletedWorks.length; i++) {
+                const work = deletedWorks[i];
+
+                const reponse = await fetch(`http://localhost:5678/api/works/${deletedWorks[i]}`, {
+                    method: 'DELETE',
+                    headers: {
+                        accept: "*/*",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            }
+            deletedWorks = [];
+        }
     });
 }
